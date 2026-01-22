@@ -60,9 +60,3 @@ function Button({
 }
 
 export { Button, buttonVariants }
-git init
-git add .
-git commit -m "initialized project"
-git branch -M main
-git remote add origin https://github.com/naims6/job-application-tracker.git
-git push -u origin main
