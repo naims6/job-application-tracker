@@ -10,7 +10,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signUp } from "@/lib/auth/auth.client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 interface SignUpInput {
   name: string;
@@ -19,14 +22,31 @@ interface SignUpInput {
 }
 
 export default function SignUp() {
+  const [error, setError] = useState<string>("");
+  const router = useRouter();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<SignUpInput>();
 
-  const onSubmit: SubmitHandler<SignUpInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<SignUpInput> = async (d) => {
+    const { name, email, password } = d;
+    try {
+      const { data, error } = await signUp.email({
+        name,
+        email,
+        password,
+      });
+      // if error
+      if (error) {
+        setError(error.message ?? "Failed to sign up");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -43,6 +63,8 @@ export default function SignUp() {
         {/* form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <CardContent className="space-y-4">
+            {/* error message  */}
+            {error && <p className="text-red-500">{error}</p>}
             {/* name */}
             <div className="space-y-2">
               <Label htmlFor="name" className="text-gray-700">
@@ -105,8 +127,9 @@ export default function SignUp() {
             <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/90"
+              disabled={isSubmitting}
             >
-              Sign Up
+              {isSubmitting ? "Creating account..." : "Sign Up"}
             </Button>
             <p className="text-center text-sm text-gray-600">
               Already have an account?{" "}
