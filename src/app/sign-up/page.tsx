@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,6 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+
 interface SignUpInput {
   name: string;
   email: string;
@@ -38,6 +40,7 @@ export default function SignUp() {
         email,
         password,
       });
+      console.log({ data, error });
       // if error
       if (error) {
         setError(error.message ?? "Failed to sign up");
