@@ -3,6 +3,8 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { MongoClient } from "mongodb";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { initializeUserBoard } from "../init-user-board";
+
 
 const client = new MongoClient(process.env.MONGODB_URI!);
 const db = client.db();
@@ -11,16 +13,27 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
-
+  // session: {
+  //   cookieCache: {
+  //     enabled: true,
+  //     maxAge: 60 * 60,
+  //   },
+  // },
   emailAndPassword: {
     enabled: true,
   },
-  // socialProviders: {
-  //   github: {
-  //     clientId: process.env.GITHUB_CLIENT_ID as string,
-  //     clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-  //   },
-  // },
+
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          if (user.id) {
+            await initializeUserBoard(user.id);
+          }
+        },
+      },
+    },
+  },
 });
 
 export const getSession = async () => {

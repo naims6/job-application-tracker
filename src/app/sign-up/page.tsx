@@ -33,6 +33,7 @@ export default function SignUp() {
   } = useForm<SignUpInput>();
 
   const onSubmit: SubmitHandler<SignUpInput> = async (d) => {
+    setError("");
     const { name, email, password } = d;
     try {
       const { data, error } = await signUp.email({

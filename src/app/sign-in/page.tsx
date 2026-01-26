@@ -31,6 +31,8 @@ export default function SignIn() {
   } = useForm<SignInInput>();
 
   const onSubmit: SubmitHandler<SignInInput> = async (d) => {
+    setError("");
+
     const { email, password } = d;
     try {
       const { data, error } = await signIn.email({
