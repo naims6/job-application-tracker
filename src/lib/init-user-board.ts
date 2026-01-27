@@ -46,19 +46,17 @@ export async function initializeUserBoard(userId: string) {
     const columns = await Promise.all(
       DEFAULT_COLUMNS.map((col) =>
         Column.create({
-          name: col.name,
-          order: col.order,
+          ...col,
           boardId: board._id,
           jobApplication: [],
         }),
       ),
     );
 
-    console.log({ board, columns });
-
     // Update the board with the new column IDs
     board.columns = columns.map((col) => col._id);
     await board.save();
+    
     return board;
   } catch (err) {
     throw err;
