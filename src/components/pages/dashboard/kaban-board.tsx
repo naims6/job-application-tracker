@@ -1,4 +1,5 @@
 "use client";
+import CreateJobApplicationDialog from "@/components/create-job-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -60,6 +61,7 @@ function DropplableColumn({
   config: ColConfig;
   boardId: string;
 }) {
+  console.log({ column });
   return (
     <Card className="min-w-75 shrink-0 shadow-md p-0">
       <CardHeader
@@ -77,12 +79,12 @@ function DropplableColumn({
                 size={"icon"}
                 className="h-6 w-6 text-white hover:bg-white/20"
               >
-                <MoreVertical className="h-4 w-4"/>
+                <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem className="text-destructive">
-                <Trash2 className="mr-2 h-4 w-4"/> Delete Column
+                <Trash2 className="mr-2 h-4 w-4" /> Delete Column
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -90,7 +92,7 @@ function DropplableColumn({
       </CardHeader>
 
       <CardContent className="space-y-2 pt-4 bg-gray-50/50 min-h-100 rounded-b-lg">
-
+        <CreateJobApplicationDialog columnId={column._id} boardId={boardId} />
       </CardContent>
     </Card>
   );
