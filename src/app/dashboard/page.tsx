@@ -18,9 +18,7 @@ export default async function Dashboard() {
   const board = await Board.findOne({ userId: session.user.id }).populate({
     path: "columns",
   });
-
   const finalBoard = parseJSON(board);
-  console.log("finalboard:", finalBoard.columns);
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto p-6">

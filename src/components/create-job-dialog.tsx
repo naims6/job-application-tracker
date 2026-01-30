@@ -47,11 +47,12 @@ export default function CreateJobApplicationDialog({
   const onSubmit = (data: IJobApplication) => {
     console.log(data);
   };
+  
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
-          <Plus /> Plus
+        <Button variant={"outline"} className="justify-start w-full">
+          <Plus /> Add Job
         </Button>
       </DialogTrigger>
       <DialogContent>
