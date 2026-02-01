@@ -15,6 +15,7 @@ interface IJobApplication {
   notes: string;
   boardId: string;
   columnId: string;
+  userId: string;
 }
 
 export async function createJobApplication(data: IJobApplication) {
@@ -37,6 +38,7 @@ export async function createJobApplication(data: IJobApplication) {
     description,
     notes,
   } = data;
+  console.log({ columnId, boardId });
 
   if (!company || !position) {
     // todo: add column id and board id
@@ -57,13 +59,17 @@ export async function createJobApplication(data: IJobApplication) {
     return { error: "Column not found" };
   }
 
-   const maxOrder = await JobApplication.findOne({columnId}).sort({order: -1}).select("order").lean()
+  const maxOrder = (await JobApplication.findOne({ columnId })
+    .sort({ order: -1 })
+    .select("order")
+    .lean()) as { order: number } | null;
 
   const jobApplication = await JobApplication.create({
     company,
     position,
     boardId,
     columnId,
+    userId: session.user.id,
     location,
     salary,
     jobUrl,
@@ -71,6 +77,12 @@ export async function createJobApplication(data: IJobApplication) {
     description,
     notes,
     status: "applied",
-    order: "",
-  })
+    order: maxOrder ? maxOrder.order + 1 : 0,
+  });
+
+  await Column.findByIdAndUpdate(columnId, {
+    $push: { jobApplications: jobApplication._id },
+  });
+
+  return { data: JSON.parse(JSON.stringify(jobApplication)) };
 }

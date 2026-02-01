@@ -8,7 +8,7 @@ export interface Column {
   _id: string;
   name: string;
   order: number;
-  jobApplication: JobApplication[];
+  jobApplications: JobApplication[];
 }
 
 export interface JobApplication {

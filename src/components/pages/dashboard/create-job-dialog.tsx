@@ -10,12 +10,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
+} from "../../ui/dialog";
+import { Button } from "../../ui/button";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
 import { useForm } from "react-hook-form";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "../../ui/textarea";
+import { createJobApplication } from "@/app/actions/job-applications";
+import { useState } from "react";
 
 interface CreateJobApplicationDialogProps {
   columnId: string;
@@ -28,28 +30,48 @@ interface IJobApplication {
   location: string;
   salary: string;
   jobUrl: string;
-  tags: string[];
+  tags: string;
   description: string;
   notes: string;
+  userId: string;
 }
 
 export default function CreateJobApplicationDialog({
   columnId,
   boardId,
 }: CreateJobApplicationDialogProps) {
-  console.log({ columnId, boardId });
+  const [open, setOpen] = useState<boolean>(false);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<IJobApplication>();
 
-  const onSubmit = (data: IJobApplication) => {
-    console.log(data);
+  const onSubmit = async (data: IJobApplication) => {
+    try {
+      const result = await createJobApplication({
+        ...data,
+        columnId,
+        boardId,
+        tags: data.tags
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0),
+      });
+
+      if (!result.error) {
+        alert("Job added successfully");
+        setOpen(false);
+      } else {
+        console.error("Failed to create job: ", result.error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
-  
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant={"outline"} className="justify-start w-full">
           <Plus /> Add Job
@@ -200,8 +222,9 @@ export default function CreateJobApplicationDialog({
               type="submit"
               variant={"default"}
               className="px-6 cursor-pointer"
+              disabled={isSubmitting}
             >
-              Add Application
+              {isSubmitting ? "Submitting" : "Add Application"}
             </Button>
           </DialogFooter>
         </form>

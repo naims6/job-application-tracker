@@ -1,3 +1,4 @@
+"use cache"
 import { KabanBoard } from "@/components/pages/dashboard/kaban-board";
 import { getSession } from "@/lib/auth/auth";
 import connectDB from "@/lib/db";
@@ -17,6 +18,9 @@ export default async function Dashboard() {
 
   const board = await Board.findOne({ userId: session.user.id }).populate({
     path: "columns",
+    populate: {
+      path: "jobApplications"
+    }
   });
   const finalBoard = parseJSON(board);
   return (
