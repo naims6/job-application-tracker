@@ -9,6 +9,7 @@ import {
   XCircle,
 } from "lucide-react";
 import DropplableColumn, { ColConfig } from "./droppable-column";
+import { useBoard } from "@/lib/hooks/useBoards";
 
 interface KanbanBoardProps {
   board: Board;
@@ -38,12 +39,12 @@ const COLUMN_CONFIG: Array<ColConfig> = [
 ];
 
 export function KabanBoard({ board }: KanbanBoardProps) {
-  const columns = board.columns;
+  const {columns, moveJob} = useBoard(board)
    const sortedColumns = columns?.sort((a, b) => a.order - b.order) || [];
   return (
-    <div>
-      <div>
-        {columns.map((col, key) => {
+    <div className="space-y-4">
+        <div className="flex gap-4 overflow-x-auto pb-4">
+        {columns?.map((col, key) => {
           const config = COLUMN_CONFIG[key] || {
             color: "bg-gray-500",
             icon: <Calendar className="h-4 w-4" />,
