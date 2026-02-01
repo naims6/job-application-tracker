@@ -12,7 +12,6 @@ import DropplableColumn, { ColConfig } from "./droppable-column";
 
 interface KanbanBoardProps {
   board: Board;
-  userId: string;
 }
 
 const COLUMN_CONFIG: Array<ColConfig> = [
