@@ -3,23 +3,37 @@ import { getSession } from "@/lib/auth/auth";
 import connectDB from "@/lib/db";
 import { Board } from "@/lib/models";
 import parseJSON from "@/lib/parseJSON";
+import { unstable_cache } from "next/cache";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-async function getBoard(userId: string) {
-  "use cache";
-  await connectDB();
+// async function getBoard(userId: string) {
+//   "use cache";
+//   await connectDB();
 
-  const boardDoc = await Board.findOne({ userId: userId }).populate({
-    path: "columns",
-    populate: {
-      path: "jobApplications",
-    },
-  });
+//   const boardDoc = await Board.findOne({ userId: userId }).populate({
+//     path: "columns",
+//     populate: {
+//       path: "jobApplications",
+//     },
+//   });
 
-  const board = parseJSON(boardDoc);
-  return board;
-}
+//   const board = parseJSON(boardDoc);
+//   return board;
+// }
+
+const getBoard = unstable_cache(
+  async (userId: string) => {
+    await connectDB();
+    const board = await Board.findOne({ userId }).populate({
+      path: "columns",
+      populate: { path: "jobApplications" },
+    });
+    return parseJSON(board);
+  },
+  ["board"],
+  { revalidate: 60 },
+);
 
 async function DashboardPage() {
   const session = await getSession();
